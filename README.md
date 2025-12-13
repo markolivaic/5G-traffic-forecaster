@@ -66,7 +66,7 @@ pip install -r requirements.txt
 Execute the unit test suite to verify system integrity:
 
 ```bash
-python test_core.py
+python -m unittest discover -s tests -p "test_*.py"
 ```
 
 ## Usage
@@ -200,7 +200,7 @@ The project includes automated testing via GitHub Actions. The CI pipeline perfo
 Test execution:
 
 ```bash
-python -m unittest discover -s . -p "test_*.py"
+python -m unittest discover -s tests -p "test_*.py"
 ```
 
 ## Technical Highlights
@@ -230,13 +230,15 @@ Statistical confidence intervals enable risk assessment in network slicing decis
 │   ├── data_loader.py         # Data generation and preprocessing
 │   ├── lstm_model.py          # LSTM architecture definition
 │   └── trainer.py             # Training and evaluation logic
+├── tests/
+│   ├── __init__.py
+│   └── test_core.py           # Unit test suite
 ├── models/                    # Model artifacts (generated)
 ├── reports/                   # Visualizations (generated)
 ├── notebooks/
 │   └── research_analysis.ipynb
 ├── main.py                    # Training pipeline entry point
 ├── dashboard.py               # Streamlit dashboard
-├── test_core.py               # Unit test suite
 ├── requirements.txt           # Python dependencies
 ├── Dockerfile                 # Container configuration
 └── README.md                  # This file
