@@ -1,0 +1,49 @@
+name: 5G AI Professional CI/CD
+
+# Kada se ovo pokreće?
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+# Što točno radi?
+jobs:
+  build-and-test:
+    name: 🏗️ Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Skini kod s GitHuba
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # 2. Instaliraj Python
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      # 3. Instaliraj biblioteke (cache-aj ih da bude brže)
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Pokreni Testove (Ono što smo napisali u Koraku 1)
+      - name: 🧪 Run Unit Tests
+        run: |
+          python -m unittest discover tests
+
+  docker-validation:
+    name: 🐳 Docker Build Check
+    needs: build-and-test # Pokreni samo ako testovi prođu
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # 5. Probaj buildati Docker (Simulacija produkcije)
+      - name: Build Docker Image
+        run: docker build . --file Dockerfile --tag 5g-forecaster:latest
