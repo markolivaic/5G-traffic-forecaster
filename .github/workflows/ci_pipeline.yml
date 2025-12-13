@@ -1,49 +1,49 @@
 name: 5G AI Professional CI/CD
 
-# Kada se ovo pokreće?
+# Trigger conditions: Execute on pushes and pull requests to main/master branches
 on:
   push:
     branches: ["main", "master"]
   pull_request:
     branches: ["main", "master"]
 
-# Što točno radi?
+# Pipeline jobs: Build, test, and validate Docker container
 jobs:
   build-and-test:
-    name: 🏗️ Build & Test
+    name: Build & Test
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Skini kod s GitHuba
+      # Step 1: Checkout source code from repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # 2. Instaliraj Python
+      # Step 2: Configure Python environment
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
 
-      # 3. Instaliraj biblioteke (cache-aj ih da bude brže)
+      # Step 3: Install project dependencies with pip caching for faster builds
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Pokreni Testove (Ono što smo napisali u Koraku 1)
-      - name: 🧪 Run Unit Tests
+      # Step 4: Execute unit test suite
+      - name: Run Unit Tests
         run: |
           python -m unittest discover tests
 
   docker-validation:
-    name: 🐳 Docker Build Check
-    needs: build-and-test # Pokreni samo ako testovi prođu
+    name: Docker Build Check
+    needs: build-and-test # Execute only if build-and-test job succeeds
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # 5. Probaj buildati Docker (Simulacija produkcije)
+      # Step 5: Build Docker container to validate production deployment
       - name: Build Docker Image
         run: docker build . --file Dockerfile --tag 5g-forecaster:latest
