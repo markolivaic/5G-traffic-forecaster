@@ -6,12 +6,32 @@ The 5G Traffic Forecaster is a Proof-of-Concept system designed to address Radio
 
 Traditional reactive approaches to network resource management introduce latency penalties when responding to traffic spikes. This system provides forward-looking predictions with uncertainty quantification, allowing network operators to preemptively scale resources before congestion occurs, thereby reducing latency and optimizing resource utilization.
 
+## System Demonstration
+
+### Traffic Pattern Analysis
+
+Analysis of synthetic RAN logs reveals strong diurnal seasonality (day/night cycles) and stochastic bursts in network traffic patterns.
+
+![Time Series Pattern](assets/time_series_pattern.png)
+
+### Distribution Analysis
+
+Throughput distribution exhibits realistic network characteristics with identifiable peak and low-traffic periods.
+
+![Distribution Analysis](assets/distribution_analysis.png)
+
+### Forecast Performance
+
+The model predicts future load against ground truth with 95% confidence intervals, enabling risk-aware decision making for network slicing operations.
+
+![Forecast Results](reports/forecast_result.png)
+
 ## System Architecture
 
 The system implements a complete machine learning pipeline from data generation through model deployment:
 
 ```
-Data Generation → Preprocessing → LSTM Network → Uncertainty Quantification → REST API
+[RAN Logs] → [ETL / MinMax Scaling] → [LSTM Network] → [Inference API] → [Orchestrator]
 ```
 
 ### Pipeline Components
@@ -25,6 +45,26 @@ Data Generation → Preprocessing → LSTM Network → Uncertainty Quantificatio
 4. **Uncertainty Quantification**: Residual analysis on test data enables calculation of 95% confidence intervals, providing risk assessment capabilities for production decision-making.
 
 5. **REST API**: FastAPI-based microservice exposes the trained model for real-time inference with network slicing recommendations based on predicted throughput thresholds.
+
+## Methodology
+
+### LSTM Architecture
+
+Standard Recurrent Neural Networks (RNNs) suffer from vanishing gradient problems when processing long sequences, limiting their ability to capture long-term temporal dependencies. This system employs Long Short-Term Memory (LSTM) cells to address these limitations through specialized gating mechanisms that selectively retain and discard information across time steps.
+
+The LSTM cell maintains a cell state $C_t$ that serves as a long-term memory, and a hidden state $h_t$ that serves as short-term memory. The forget gate determines what information to discard from the previous cell state:
+
+$$ f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f) $$
+
+where $\sigma$ is the sigmoid activation function, $W_f$ and $b_f$ are learned weight matrices and biases, $h_{t-1}$ is the previous hidden state, and $x_t$ is the current input.
+
+The cell state is updated through a combination of the previous state and new candidate values:
+
+$$ C_t = f_t * C_{t-1} + i_t * \tilde{C}_t $$
+
+where $i_t$ is the input gate activation and $\tilde{C}_t$ is the candidate cell state. This architecture enables the model to learn which information is relevant for long-term prediction and which can be forgotten, making LSTMs particularly effective for time-series forecasting tasks with extended temporal dependencies.
+
+The implemented architecture uses a two-layer stacked LSTM design (64 → 32 units) with dropout regularization to capture hierarchical temporal patterns while preventing overfitting to training data.
 
 ## Key Features
 
