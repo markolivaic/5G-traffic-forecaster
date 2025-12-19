@@ -54,13 +54,13 @@ Standard Recurrent Neural Networks (RNNs) suffer from vanishing gradient problem
 
 The LSTM cell maintains a cell state $C_t$ that serves as a long-term memory, and a hidden state $h_t$ that serves as short-term memory. The forget gate determines what information to discard from the previous cell state:
 
-$$ f_t = \sigma(W_f \cdot [h_{t-1}, x_t] + b_f) $$
+$$ f*t = \sigma(W_f \cdot [h*{t-1}, x_t] + b_f) $$
 
 where $\sigma$ is the sigmoid activation function, $W_f$ and $b_f$ are learned weight matrices and biases, $h_{t-1}$ is the previous hidden state, and $x_t$ is the current input.
 
 The cell state is updated through a combination of the previous state and new candidate values:
 
-$$ C_t = f_t * C_{t-1} + i_t * \tilde{C}_t $$
+$$ C*t = f_t \* C*{t-1} + i_t \* \tilde{C}\_t $$
 
 where $i_t$ is the input gate activation and $\tilde{C}_t$ is the candidate cell state. This architecture enables the model to learn which information is relevant for long-term prediction and which can be forgotten, making LSTMs particularly effective for time-series forecasting tasks with extended temporal dependencies.
 
@@ -273,10 +273,14 @@ Statistical confidence intervals enable risk assessment in network slicing decis
 ├── tests/
 │   ├── __init__.py
 │   └── test_core.py           # Unit test suite
+├── assets/                    # Visualization assets
+│   ├── time_series_pattern.png
+│   └── distribution_analysis.png
 ├── models/                    # Model artifacts (generated)
 ├── reports/                   # Visualizations (generated)
+│   └── forecast_result.png
 ├── notebooks/
-│   └── research_analysis.ipynb
+│   └── exploration.ipynb
 ├── main.py                    # Training pipeline entry point
 ├── dashboard.py               # Streamlit dashboard
 ├── requirements.txt           # Python dependencies
