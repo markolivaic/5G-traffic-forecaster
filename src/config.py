@@ -6,23 +6,27 @@ Using a centralized configuration approach ensures consistency across all
 components of the system and simplifies deployment across environments.
 """
 
-import os
+from pathlib import Path
 
 # Data Generation Configuration
+# Simulating 6 months of RAN traffic to capture seasonal trends
 DAYS = 180
 HOURS_PER_DAY = 24
 TOTAL_STEPS = DAYS * HOURS_PER_DAY
 
 # Model Hyperparameters
+# Lookback Window: 24 hours. 
+# Chosen to capture the diurnal (day/night) cycle inherent in telecom traffic.
 LOOKBACK_WINDOW = 24
 TRAIN_TEST_SPLIT = 0.8
+
+# Training parameters tuned for LSTM convergence on stochastic data
 EPOCHS = 20
 BATCH_SIZE = 32
 
 # File System Paths
-# BASE_DIR: Resolves to project root by traversing two directory levels
-# (from src/config.py -> src/ -> project_root/)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_PATH = os.path.join(BASE_DIR, "models", "5g_lstm_v1.keras")
-SCALER_PATH = os.path.join(BASE_DIR, "models", "scaler.gz")
-IMG_PATH = os.path.join(BASE_DIR, "reports", "forecast_result.png")
+# Using pathlib for robust path handling across OS environments
+BASE_DIR = Path(__file__).resolve().parent.parent
+MODEL_PATH = BASE_DIR / "models" / "5g_lstm_v1.keras"
+SCALER_PATH = BASE_DIR / "models" / "scaler.gz"
+IMG_PATH = BASE_DIR / "reports" / "forecast_result.png"
